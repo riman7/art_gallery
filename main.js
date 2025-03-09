@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+
 import { TextureLoader } from 'three';
 
 const scene = new THREE.Scene();
@@ -8,6 +9,10 @@ const canvas = document.querySelector('canvas');
 const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+const loader = new TextureLoader();
+
+scene.fog = new THREE.Fog(0x000000, 2, 120);
 
 // Ambient Light
 const ambientLight = new THREE.AmbientLight("#808080", 0.4);
@@ -37,7 +42,12 @@ for(let i=1; i<=6; i++){
 }
 
 
-const loader = new TextureLoader();
+let spotLight1 = new THREE.SpotLight( "#FFF4DF", 50, 50, Math.PI /18, 1, 1);
+spotLight1.position.set(10, -5, -10);
+spotLight1.target.position.set(-5, -1.3, -10.1);
+scene.add(spotLight1);
+scene.add(spotLight1.target);
+
 const texture = loader.load('./public/texture/white-wall-textures.jpg'); // Replace with your image path
 texture.wrapS = THREE.RepeatWrapping; // Repeat horizontally
 texture.wrapT = THREE.RepeatWrapping; // Repeat vertically
@@ -166,7 +176,6 @@ paintings.forEach((paintingData) => {
 
 // Camera Initial Position
 let initialCameraPos = new THREE.Vector3(0, 0, 0);
-let initialCameraRot = camera.rotation.clone();
 camera.position.copy(initialCameraPos);
 
 // Raycaster for Click Detection
@@ -199,7 +208,7 @@ document.body.appendChild(goBackButton);
 let targetCameraPos = null;
 let targetCameraLookAt = null;
 let animationProgress = 0;
-const animationSpeed = 0.002;
+const animationSpeed = 0.01;
 
 // Click Handler
 window.addEventListener('click', (event) => {
@@ -236,15 +245,14 @@ window.addEventListener('click', (event) => {
 // Go Back Handler
 goBackButton.addEventListener('click', () => {
     targetCameraPos = initialCameraPos.clone();
-    targetCameraLookAt = new THREE.Vector3(0, 0, -room_length); // Look down hallway
+    targetCameraLookAt = new THREE.Vector3(0, 0, -room_length);
+
     detailsDiv.style.display = 'none';
     goBackButton.style.display = 'none';
     animationProgress = 0;
 });
 
-
-
-camera.position.z = 0;
+camera.position.z = 2;
 
 const moveSpeed = 0.5; 
 // Keyboard controls
@@ -277,8 +285,11 @@ function animate() {
     
     // Animate camera if target exists
     if (targetCameraPos && targetCameraLookAt) {
+        console.log("targetpos"+targetCameraPos);
+        console.log("targetlookat"+targetCameraLookAt);
         animationProgress += animationSpeed;
         if (animationProgress <= 1) {
+            console.log("animationPregress"+animationProgress)
             //Interpolate position
             camera.position.lerp(targetCameraPos, animationProgress);
 
@@ -290,6 +301,8 @@ function animate() {
         } else {
             camera.position.copy(targetCameraPos);
             camera.lookAt(targetCameraLookAt);
+            targetCameraPos = 0
+            targetCameraLookAt = 0
             animationProgress = 1; // Lock at end
         }
     }
