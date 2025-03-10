@@ -48,7 +48,7 @@ for(let i=1; i<=6; i++){
 // scene.add(spotLight1);
 // scene.add(spotLight1.target);
 
-const texture = loader.load('./public/texture/white-wall-textures.jpg'); // Replace with your image path
+const texture = loader.load('/texture/white-wall-textures.jpg'); // Replace with your image path
 texture.wrapS = THREE.RepeatWrapping; // Repeat horizontally
 texture.wrapT = THREE.RepeatWrapping; // Repeat vertically
 // Base repeat unit (tiles per 10 units, assuming texture is square)
@@ -84,7 +84,7 @@ scene.add(backWall);
 
 // Floor and Ceiling
 
-const floor_texture = loader.load('./public/texture/floor.jpg'); // Replace with your image path
+const floor_texture = loader.load('/texture/floor.jpg'); // Replace with your image path
 floor_texture.wrapS = THREE.RepeatWrapping; // Repeat horizontally
 floor_texture.wrapT = THREE.RepeatWrapping; // Repeat vertically
 floor_texture.repeat.set(room_length / 10 * baseRepeat, 1 * baseRepeat); // 7, 1
@@ -112,12 +112,12 @@ scene.add(ceiling);
 
 // Paintings
 const paintings = [
-    { title: "Mona Lisa", img: "./public/images/img1.jpg", details: "here are some details<br>im the hero", date: "17th Oct, 1923" },
-    { title: "Cristiano Ronaldo", img: "./public/images/img2.jpg", details: "A beautiful starry night painting.", date: "3rd July, 1998" },
-    { title: "Cristiano Ronaldo", img: "./public/images/img2.jpg", details: "The famous scream by Edvard Munch.", date: "21st Dec, 1951" },
-    { title: "Mona Lisa", img: "./public/images/img1.jpg", details: "A reimagining of Mona Lisa.", date: "5th Feb, 1985" },
-    { title: "Starry Night", img: "./public/images/img1.jpg", details: "Another take on Starry Night.", date: "28th March, 1972" },
-    { title: "The Scream", img: "./public/images/img1.jpg", details: "An expressionist masterpiece.", date: "14th August, 1964" }
+    { title: "Mona Lisa", img: "/images/img1.jpg", details: "here are some details<br>im the hero", date: "17th Oct, 1923" },
+    { title: "Cristiano Ronaldo", img: "/images/img2.jpg", details: "A beautiful starry night painting.", date: "3rd July, 1998" },
+    { title: "Cristiano Ronaldo", img: "/images/img2.jpg", details: "The famous scream by Edvard Munch.", date: "21st Dec, 1951" },
+    { title: "Mona Lisa", img: "/images/img1.jpg", details: "A reimagining of Mona Lisa.", date: "5th Feb, 1985" },
+    { title: "Starry Night", img: "/images/img1.jpg", details: "Another take on Starry Night.", date: "28th March, 1972" },
+    { title: "The Scream", img: "/images/img1.jpg", details: "An expressionist masterpiece.", date: "14th August, 1964" }
   ];
 
 
@@ -149,6 +149,7 @@ const paintingMeshes = [];
 let i = 0;
 paintings.forEach((paintingData) => {
     var pos = i%2==0 ?-25 + i*4 : 0+i*4;
+    let currentI = i; // Capture i for this iteration
  
     const image = new Image();
     image.src = paintingData.img;
@@ -176,7 +177,7 @@ paintings.forEach((paintingData) => {
         const material = new THREE.MeshStandardMaterial({ map: texture });
         const painting = new THREE.Mesh(paintingGeometry, material);
         painting.position.set(pos, 0, 0.1); // Local: just inside, spaced along z
-        i%2==0?leftWall.add(painting):rightWall.add(painting);
+        currentI % 2 === 0 ? leftWall.add(painting) : rightWall.add(painting); // Use captured i
         paintingMeshes.push(painting);
     };
     
