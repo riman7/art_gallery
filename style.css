@@ -10,3 +10,73 @@ html, body, canvas {
     padding: 0;
     overflow: hidden; /* Prevent scrolling */
   }
+  .details-div {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px; /* Minimal padding for spacing */
+    display: none;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    transition: all 0.4s ease-in-out; /* Smooth fade and slight move */
+    
+}
+
+.details-div h2 {
+    margin: 0 0 8px 0; /* Tight spacing below */
+    font-size: 28px; /* Larger for prominence */
+    font-family: 'Inter', 'Arial', sans-serif;
+    font-weight: 800; /* Extra bold */
+    letter-spacing: 1px; /* Wider spacing for modernity */
+    text-transform: uppercase; /* Bold, gallery-style */
+    color: #ffffff; /* Pure white */
+    text-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.8), /* Soft glow */
+        0 2px 4px rgba(0, 0, 0, 0.5); /* Dark shadow for depth */
+}
+
+.details-div p {
+    margin: 0;
+    font-size: 18px; /* Slightly larger for clarity */
+    font-family: 'Inter', 'Arial', sans-serif;
+    font-weight: 500; /* Medium weight */
+    line-height: 1.4; /* Readable spacing */
+    color: #e0f7ff; /* Light teal-white for subtle contrast */
+    text-shadow: 
+        0 0 8px rgba(200, 240, 255, 0.6), /* Faint teal glow */
+        0 1px 3px rgba(0, 0, 0, 0.4); /* Shadow for legibility */
+}
+.go-back-btn {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, hsla(192, 87%, 27%, 0.95), hsla(240, 77%, 41%, 0.9)); /* Dark teal gradient */
+    color: #ffffff; /* White text */
+    font-size: 18px;
+    font-family: 'Inter', 'Arial', sans-serif;
+    font-weight: 600;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    display: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.go-back-btn:hover {
+    background: linear-gradient(135deg, hsla(190, 43%, 27%, 0.95), hsla(190, 60%, 20%, 0.9)); /* Lighter teal */
+    color: #ffffff; /* Stays white */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.go-back-btn:active {
+    background: linear-gradient(135deg, rgba(15, 45, 55, 0.95), rgba(5, 25, 35, 0.9)); /* Darker teal */
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transform: translateX(-50%) translateY(1px);
+}

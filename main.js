@@ -42,11 +42,11 @@ for(let i=1; i<=6; i++){
 }
 
 
-let spotLight1 = new THREE.SpotLight( "#FFF4DF", 50, 50, Math.PI /18, 1, 1);
-spotLight1.position.set(10, -5, -10);
-spotLight1.target.position.set(-5, -1.3, -10.1);
-scene.add(spotLight1);
-scene.add(spotLight1.target);
+// let spotLight1 = new THREE.SpotLight( "#FFF4DF", 50, 50, Math.PI /18, 1, 1);
+// spotLight1.position.set(10, -5, -10);
+// spotLight1.target.position.set(-5, -1.3, -10.1);
+// scene.add(spotLight1);
+// scene.add(spotLight1.target);
 
 const texture = loader.load('./public/texture/white-wall-textures.jpg'); // Replace with your image path
 texture.wrapS = THREE.RepeatWrapping; // Repeat horizontally
@@ -90,7 +90,7 @@ floor_texture.wrapT = THREE.RepeatWrapping; // Repeat vertically
 floor_texture.repeat.set(room_length / 10 * baseRepeat, 1 * baseRepeat); // 7, 1
 
 const floorGeometry = new THREE.PlaneGeometry(20, room_length); // Width (x) = 20, Depth (z) = 70
-const floorMaterial = new THREE.MeshStandardMaterial({ map: floor_texture, side: THREE.DoubleSide});
+const floorMaterial = new THREE.MeshStandardMaterial({ map: floor_texture});
 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.rotation.x = -Math.PI / 2;
 floor.position.y = -5;
@@ -112,14 +112,15 @@ scene.add(ceiling);
 
 // Paintings
 const paintings = [
-    { title: "1Mona Lisa", img: "./public/images/img1.jpg" },
-    { title: "2Starry Night", img: "./public/images/img1.jpg" },
-    { title: "3The Scream", img: "./public/images/img1.jpg" },
-    { title: "4Mona Lisa", img: "./public/images/img1.jpg" },
-    { title: "5Starry Night", img: "./public/images/img1.jpg" },
-    { title: "6The Scream", img: "./public/images/img1.jpg" }
-];
-const paintingGeometry = new THREE.PlaneGeometry(4, 4);
+    { title: "Mona Lisa", img: "./public/images/img1.jpg", details: "here are some details<br>im the hero", date: "17th Oct, 1923" },
+    { title: "Cristiano Ronaldo", img: "./public/images/img2.jpg", details: "A beautiful starry night painting.", date: "3rd July, 1998" },
+    { title: "Cristiano Ronaldo", img: "./public/images/img2.jpg", details: "The famous scream by Edvard Munch.", date: "21st Dec, 1951" },
+    { title: "Mona Lisa", img: "./public/images/img1.jpg", details: "A reimagining of Mona Lisa.", date: "5th Feb, 1985" },
+    { title: "Starry Night", img: "./public/images/img1.jpg", details: "Another take on Starry Night.", date: "28th March, 1972" },
+    { title: "The Scream", img: "./public/images/img1.jpg", details: "An expressionist masterpiece.", date: "14th August, 1964" }
+  ];
+
+
 
 function createTextTexture(text) {
     const canvas = document.createElement('canvas');
@@ -130,8 +131,8 @@ function createTextTexture(text) {
 
     // Remove background fill to keep transparency
 
-    ctx.font = '30px Arial';  
-    ctx.fillStyle = 'black';   // Text color
+    ctx.font = 'bold 30px "Inter", "Arial", sans-serif';  
+    ctx.fillStyle = '#000000';   // Text color
     ctx.textAlign = 'center';  
     ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 10); 
 
@@ -142,24 +143,54 @@ function createTextTexture(text) {
     return texture;
 }
 
-
-
-
 // Store paintings for raycasting
 const paintingMeshes = [];
-// Left Wall Paintings
+
 let i = 0;
 paintings.forEach((paintingData) => {
-    const texture = loader.load(paintingData.img);
-    const material = new THREE.MeshStandardMaterial({ map: texture });
-    const painting = new THREE.Mesh(paintingGeometry, material);
     var pos = i%2==0 ?-25 + i*4 : 0+i*4;
-    painting.position.set(pos, 0, 0.1); // Local: just inside, spaced along z
-    i%2==0?leftWall.add(painting):rightWall.add(painting);
-    paintingMeshes.push(painting);
+ 
+    const image = new Image();
+    image.src = paintingData.img;
+    image.onload = function() {
+        // Get the image width and height
+        const aspectRatio = image.width / image.height;
+        
+        const maxSize = 4; // Max dimension (width or height)
+
+        // Calculate dimensions to maintain aspect ratio
+        let width, height;
+        if (aspectRatio > 1) {
+            // Wide image (width > height)
+            width = maxSize;
+            height = maxSize / aspectRatio;
+        } else {
+            // Tall or square image (height >= width)
+            height = maxSize;
+            width = maxSize * aspectRatio;
+        }
+        
+        const paintingGeometry = new THREE.PlaneGeometry(width, height);
+        const texture = loader.load(paintingData.img);
+    
+        const material = new THREE.MeshStandardMaterial({ map: texture });
+        const painting = new THREE.Mesh(paintingGeometry, material);
+        painting.position.set(pos, 0, 0.1); // Local: just inside, spaced along z
+        i%2==0?leftWall.add(painting):rightWall.add(painting);
+        paintingMeshes.push(painting);
+    };
+    
+
+    let spotLight1 = new THREE.SpotLight( "#FFEDCB", 35, 50, Math.PI /18, 1, 1);
+    spotLight1.position.set(i%2==0 ?10:-10, -5, i%2==0 ?pos-1:-pos-11);
+    spotLight1.target.position.set(i%2==0 ?-5:5, -1.3, i%2==0 ?pos-1:-pos-11);
+    scene.add(spotLight1);
+    scene.add(spotLight1.target);
+    // const spotLightHelper = new THREE.SpotLightHelper(spotLight1, 0x00ff00); // Green cone
+    // scene.add(spotLightHelper);
 
    // Create a plane for text
-    const textTexture = createTextTexture(paintingData.title);
+    const textTexture = createTextTexture(paintingData.date);
     const textMaterial = new THREE.MeshBasicMaterial({ 
         map: textTexture, 
         transparent: true,  // Allow transparency
@@ -184,23 +215,15 @@ const mouse = new THREE.Vector2();
 
 // HTML Overlay for Details
 const detailsDiv = document.createElement('div');
-detailsDiv.style.position = 'absolute';
-detailsDiv.style.top = '20px';
-detailsDiv.style.left = '20px';
-detailsDiv.style.background = 'rgba(0, 0, 0, 0.8)';
-detailsDiv.style.color = 'white';
-detailsDiv.style.padding = '10px';
-detailsDiv.style.display = 'none';
+detailsDiv.classList.add('details-div'); // Add the CSS class
 document.body.appendChild(detailsDiv);
+detailsDiv.style.display = 'none';
 
 // Go Back Button
 const goBackButton = document.createElement('button');
+goBackButton.classList.add('go-back-btn');
 goBackButton.textContent = 'Go Back';
-goBackButton.style.position = 'absolute';
-goBackButton.style.bottom = '20px';
-goBackButton.style.left = '20px';
-goBackButton.style.padding = '10px';
-goBackButton.style.display = 'none';
+
 document.body.appendChild(goBackButton);
 
 
@@ -221,6 +244,8 @@ window.addEventListener('click', (event) => {
         initialCameraPos = camera.position.clone();
         const painting = intersects[0].object;
 
+        const paintingData = paintings[paintingMeshes.indexOf(painting)];
+
         // Calculate world position of painting
         const paintingWorldPos = new THREE.Vector3();
         painting.getWorldPosition(paintingWorldPos);
@@ -234,7 +259,12 @@ window.addEventListener('click', (event) => {
         targetCameraLookAt = paintingWorldPos.clone();
 
         // Show details
-        detailsDiv.innerHTML = `<h2>${painting.userData.title}dddd</h2><p>${painting.userData.details}ddd</p>`;
+        console.log(painting);
+        detailsDiv.innerHTML = `
+            <h2>${paintingData.title}</h2>
+            <p>${paintingData.details || "No details available."}</p>
+        `;
+        //detailsDiv.classList.add('visible');
         detailsDiv.style.display = 'block';
         goBackButton.style.display = 'block';
 
@@ -252,7 +282,7 @@ goBackButton.addEventListener('click', () => {
     animationProgress = 0;
 });
 
-camera.position.z = 2;
+camera.position.z = 1;
 
 const moveSpeed = 0.5; 
 // Keyboard controls
@@ -285,11 +315,8 @@ function animate() {
     
     // Animate camera if target exists
     if (targetCameraPos && targetCameraLookAt) {
-        console.log("targetpos"+targetCameraPos);
-        console.log("targetlookat"+targetCameraLookAt);
         animationProgress += animationSpeed;
         if (animationProgress <= 1) {
-            console.log("animationPregress"+animationProgress)
             //Interpolate position
             camera.position.lerp(targetCameraPos, animationProgress);
 
